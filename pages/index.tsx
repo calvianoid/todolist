@@ -1,84 +1,84 @@
 import type { NextPage } from 'next'
+import { useState, ChangeEvent } from 'react'
 import Head from 'next/head'
-import Image from 'next/image'
+import { TodoTask } from '../components/TodoTask'
 
 const Home: NextPage = () => {
+  const [task, setTask] = useState<string>('')
+  const [deadline, setDeadline] = useState<number>(0)
+  const [todolist, setTodoList] = useState<ITask[]>([])
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    if (event.target.name === 'task') {
+      setTask(event.target.value)
+    } else {
+      setDeadline(Number(event.target.value))
+    }
+  }
+
+  interface ITask {
+    taskName: string
+    deadline: number
+  }
+
+  const addTask = (): void => {
+    const newTask = { taskName: task, deadline: deadline }
+    setTodoList([...todolist, newTask])
+    setTask('')
+    setDeadline(0)
+    console.log(todolist)
+  }
+
+  const completedTask = (taskNameToDelete: string): void => {
+    setTodoList(todolist.filter((task) => task.taskName !== taskNameToDelete))
+  }
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
+    <div className="flex h-screen min-w-full flex-col justify-center">
       <Head>
         <title>Create Next App</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
-        <h1 className="text-6xl font-bold">
-          Welcome to{' '}
-          <a className="text-blue-600" href="https://nextjs.org">
-            Next.js!
-          </a>
-        </h1>
-
-        <p className="mt-3 text-2xl">
-          Get started by editing{' '}
-          <code className="rounded-md bg-gray-100 p-3 font-mono text-lg">
-            pages/index.tsx
-          </code>
-        </p>
-
-        <div className="mt-6 flex max-w-4xl flex-wrap items-center justify-around sm:w-full">
-          <a
-            href="https://nextjs.org/docs"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
+      {/* Header */}
+      <div className="flex h-1/4 w-full items-center justify-center bg-sky-600">
+        <div className="flex">
+          <div className="flex flex-col">
+            <input
+              className="rounded-l-lg border p-3 outline-none"
+              type="text"
+              placeholder="Task..."
+              name="task"
+              value={task}
+              onChange={handleChange}
+            />
+            <input
+              className="rounded-l-lg border p-3 outline-none"
+              type="number"
+              min="1"
+              placeholder="Deadline (in Days)..."
+              name="deadline"
+              value={deadline}
+              onChange={handleChange}
+            />{' '}
+          </div>
+          <button
+            onClick={addTask}
+            className="rounded-r-lg border bg-gray-200 p-3 font-semibold hover:bg-gray-300"
           >
-            <h3 className="text-2xl font-bold">Documentation &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Find in-depth information about Next.js features and API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Learn &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Learn about Next.js in an interactive course with quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Examples &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Discover and deploy boilerplate example Next.js projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Deploy &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+            Add Task
+          </button>
         </div>
-      </main>
+      </div>
 
-      <footer className="flex h-24 w-full items-center justify-center border-t">
-        <a
-          className="flex items-center justify-center gap-2"
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-        </a>
-      </footer>
+      {/* Todolist */}
+      <div className="h-3/4 bg-slate-400">
+        {todolist.map((task: ITask, key: number) => {
+          return (
+            <TodoTask key={key} task={task} completedTask={completedTask} />
+          )
+        })}
+      </div>
     </div>
   )
 }
