@@ -36,7 +36,7 @@ const Home: NextPage = () => {
   return (
     <div className="flex h-screen min-w-full flex-col justify-center">
       <Head>
-        <title>Create Next App</title>
+        <title>To Do List - Typescript</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
